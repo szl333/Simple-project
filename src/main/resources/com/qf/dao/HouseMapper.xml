@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qf.dao.HouseMapper" >
+  <resultMap id="BaseResultMap" type="com.qf.pojo.House" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="h_pro" property="hPro" jdbcType="VARCHAR" />
+    <result column="h_owner" property="hOwner" jdbcType="VARCHAR" />
+    <result column="idcard" property="idcard" jdbcType="VARCHAR" />
+    <result column="h_type" property="hType" jdbcType="VARCHAR" />
+    <result column="h_area" property="hArea" jdbcType="INTEGER" />
+    <result column="buidtime" property="buidtime" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, h_pro, h_owner, idcard, h_type, h_area, buidtime
+  </sql>
+  <select id="selectAllByFuzzy" resultMap="BaseResultMap" parameterType="com.qf.pojo.House">
+    select * from house
+    <where>
+      <if test="hOwner!=null">
+        h_owner like "%"#{hOwner}"%"
+      </if>
+      <if test="idcard!=null">
+        idcard like "%"#{idcard}"%"
+      </if>
+    </where>
+    order by buidtime desc
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.qf.pojo.HouseExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from house
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from house
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from house
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.qf.pojo.HouseExample" >
+    delete from house
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.qf.pojo.House" >
+    insert into house (id, h_pro, h_owner, 
+      idcard, h_type, h_area, 
+      buidtime)
+    values (#{id,jdbcType=INTEGER}, #{hPro,jdbcType=VARCHAR}, #{hOwner,jdbcType=VARCHAR}, 
+      #{idcard,jdbcType=VARCHAR}, #{hType,jdbcType=VARCHAR}, #{hArea,jdbcType=INTEGER}, 
+      #{buidtime,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qf.pojo.House" >
+    insert into house
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="hPro != null" >
+        h_pro,
+      </if>
+      <if test="hOwner != null" >
+        h_owner,
+      </if>
+      <if test="idcard != null" >
+        idcard,
+      </if>
+      <if test="hType != null" >
+        h_type,
+      </if>
+      <if test="hArea != null" >
+        h_area,
+      </if>
+      <if test="buidtime != null" >
+        buidtime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="hPro != null" >
+        #{hPro,jdbcType=VARCHAR},
+      </if>
+      <if test="hOwner != null" >
+        #{hOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="hType != null" >
+        #{hType,jdbcType=VARCHAR},
+      </if>
+      <if test="hArea != null" >
+        #{hArea,jdbcType=INTEGER},
+      </if>
+      <if test="buidtime != null" >
+        #{buidtime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.qf.pojo.HouseExample" resultType="java.lang.Integer" >
+    select count(*) from house
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update house
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.hPro != null" >
+        h_pro = #{record.hPro,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hOwner != null" >
+        h_owner = #{record.hOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="record.idcard != null" >
+        idcard = #{record.idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hType != null" >
+        h_type = #{record.hType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.hArea != null" >
+        h_area = #{record.hArea,jdbcType=INTEGER},
+      </if>
+      <if test="record.buidtime != null" >
+        buidtime = #{record.buidtime,jdbcType=DATE},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update house
+    set id = #{record.id,jdbcType=INTEGER},
+      h_pro = #{record.hPro,jdbcType=VARCHAR},
+      h_owner = #{record.hOwner,jdbcType=VARCHAR},
+      idcard = #{record.idcard,jdbcType=VARCHAR},
+      h_type = #{record.hType,jdbcType=VARCHAR},
+      h_area = #{record.hArea,jdbcType=INTEGER},
+      buidtime = #{record.buidtime,jdbcType=DATE}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qf.pojo.House" >
+    update house
+    <set >
+      <if test="hPro != null" >
+        h_pro = #{hPro,jdbcType=VARCHAR},
+      </if>
+      <if test="hOwner != null" >
+        h_owner = #{hOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="idcard != null" >
+        idcard = #{idcard,jdbcType=VARCHAR},
+      </if>
+      <if test="hType != null" >
+        h_type = #{hType,jdbcType=VARCHAR},
+      </if>
+      <if test="hArea != null" >
+        h_area = #{hArea,jdbcType=INTEGER},
+      </if>
+      <if test="buidtime != null" >
+        buidtime = #{buidtime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qf.pojo.House" >
+    update house
+    set h_pro = #{hPro,jdbcType=VARCHAR},
+      h_owner = #{hOwner,jdbcType=VARCHAR},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      h_type = #{hType,jdbcType=VARCHAR},
+      h_area = #{hArea,jdbcType=INTEGER},
+      buidtime = #{buidtime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

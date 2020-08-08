@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>add</title>
+</head>
+<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+<script src="layui/layui.js" charset="utf-8"></script>
+<body style="text-align: center">
+<span style="font-weight: bolder; font-size: 30px;">账号注册</span>
+<!--<form id="form" class="layui-form ">-->
+<form id="form" class="layui-form layui-form-pane" >
+    <div class="layui-form-item">
+        <label class="layui-form-label" >身份证号：</label>
+        <div class="layui-input-block">
+            <input type="text" name="idcard" id="idcard" autocomplete="off" placeholder="请输入身份证号" class="layui-input"><span id="result"></span>
+        </div>
+    </div>
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label">用户名：</label>
+        <div class="layui-input-block">
+            <input type="text" name="uname" id="uname" autocomplete="off" placeholder="请输入用户名" class="layui-input"><span id="confirmName"></span>
+        </div>
+    </div>
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-block">
+            <input type="password" name="pwd" id="pwd" autocomplete="off" placeholder="请输入密码" class="layui-input"><span id="confirmPwd01"></span>
+        </div>
+    </div>
+    <div class="layui-form-item" pane>
+        <label class="layui-form-label" style="width: auto">确认密码：</label>
+        <div class="layui-input-block  ">
+            <input type="password" id="conPwd" placeholder="请确认密码" class="layui-input"><span id="confirmPwd"></span>
+        </div>
+    </div>
+    <button type="button" class="layui-btn layui-btn-normal" onclick="adduser()">注册</button><button type="button" class="layui-btn" onclick="back()">返回</button>
+</form>
+<script>
+    var regIsCommitIdcard = false;
+    var regIsCommitUname = false;
+    var regIsCommitPwd = false;
+
+    $("#idcard").blur(function findbyIdcard() {
+        var val = $("#idcard").val();
+        var length = val.length;
+        // alert(length);
+        if(null != val && length==18 && val != undefined){
+            var idcard = {"idcard" : val}
+            $.get(
+                "user/findbyIdcard",idcard,
+                function (backData) {
+                    console.log(backData);
+                    if (backData == "success"){
+                        regIsCommitIdcard = false;
+                        $("#result").text("该身份证已注册").css("color", "red");
+                    }else {
+                        regIsCommitIdcard = true;
+                        $("#result").text("身份证号可用").css("color", "green");
+                    }
+                }
+            );
+        }else {
+            regIsCommitIdcard = false;
+            $("#result").text("请输入18位身份证号！").css("color", "red");
+        }
+    })
+
+    $("#uname").blur(function confirmIdcard() {
+        var uName = $("#uname").val();
+        var uNameLength = uName.length;
+        if(null != uName && "" != uName && uName != undefined) {
+            if(uNameLength<25){
+                regIsCommitUname = true;
+                $("#confirmName").text("用户名格式正确！").css("color", "red");
+            }else {
+                regIsCommitUname = false;
+                $("#confirmName").text("用户名最长不能超过25位！").css("color", "red");
+            }
+        }else {
+            regIsCommitUname = false;
+            $("#confirmName").text("用户名不能为空！").css("color", "red");
+        }
+    })
+
+    $("#pwd").blur(function confirmIdcard() {
+        var pwd = $("#pwd").val();
+        var pwdLength = pwd.length;
+        if(null != pwd && pwdLength>6 && pwd != undefined){
+            regIsCommitPwd = true;
+            $("#confirmPwd01").text("密码格式正确!").css("color", "green");
+        } else {
+            regIsCommitPwd = false;
+            $("#confirmPwd01").text("密码至少6位！").css("color", "red");
+        }
+    })
+
+    $("#conPwd").blur(function confirmIdcard() {
+        var pwd = $("#pwd").val();
+        var pwdLength = pwd.length;
+        var conId = $("#conPwd").val();
+        var conIdLength = conId.length;
+        if(null != conId && conIdLength>6 && conId != undefined) {
+            if (pwd == conId) {
+                regIsCommitPwd = true;
+                $("#confirmPwd").text("两次密码输入一致").css("color", "green");
+            } else {
+                regIsCommitPwd = false;
+                $("#confirmPwd").text("两次密码输入不一致！").css("color", "red");
+            }
+        }else {
+            regIsCommitPwd = false;
+            $("#confirmPwd").text("密码至少6位！").css("color", "red");
+        }
+    })
+
+    function adduser(){
+        var form = $("#form").serialize();
+        if (regIsCommitIdcard && regIsCommitUname && regIsCommitPwd){
+            $.post(
+                "user/adduser",form,
+                function (backData) {
+                    console.log(backData);
+                    if (backData == "success"){
+                        layui.use(["layer"],function(){
+                            var layer = layui.layer;
+                            layer.confirm("注册成功，现在去登录吗？",
+                                {shade:false,icon:1,btn:["好滴","不去"]},
+                                function(){window.location.href="login.html";},
+                                function(){layer.msg("亲亲，注册后可以登录访问网站了")}
+                            );
+                        });
+                    }else {
+                        alert("注册失败!");
+                    }
+                }
+            )
+        } else {
+            alert("请检查注册信息!");
+        }
+    }
+
+    function back() {
+        window.location.href="login.html";
+    }
+
+</script>
+</body>
+</html>

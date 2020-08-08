@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<script type="text/javascript" src="js/jquery-1.8.3.js"></script>
+<link rel="stylesheet" href="layui/css/layui.css"  media="all">
+<script src="layui/layui.js" charset="utf-8"></script>
+<body style="text-align: center">
+<span style="font-weight: bolder; font-size: 30px;">房产信息查询系统</span>
+<form id="form" class="layui-form layui-form-pane">
+    <div class="layui-form-item">
+        <label class="layui-form-label" >身份证号：</label>
+        <div class="layui-input-block">
+            <input type="text" name="idcard" id="idcard" autocomplete="off" placeholder="请输入身份证号" class="layui-input"><span id="result"></span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码：</label>
+        <div class="layui-input-block">
+            <input type="password" name="pwd" id="pwd" autocomplete="off" placeholder="请输入密码" class="layui-input"><span id="confirmPwd01"></span>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="width: auto">确认密码：</label>
+        <div class="layui-input-block  ">
+            <input type="password" id="conPwd" placeholder="请确认密码" class="layui-input"><span id="confirmPwd"></span>
+        </div>
+    </div>
+    <button type="button" onclick="findbyIdAndPwd()" class="layui-btn layui-btn-warm">登录</button><a class="layui-btn layui-btn-normal"  href="adduser.html">注册</a>
+</form>
+
+<script>
+    function findbyIdAndPwd() {
+        var form = $("#form").serialize();
+        $.get(
+            "user/findbyIdAndPwd",form,
+            function (backData) {
+                console.log(backData);
+                if (backData == "success"){
+                    window.location.href="list01.html";
+                }else {
+                    alert("账号或密码错误!");
+                }
+            }
+        )
+    }
+    $("#idcard").blur(function findbyIdcard() {
+        var val = $("#idcard").val();
+        var length = val.length;
+        // alert(length);
+        if(null != val && length == 18 && val != undefined){
+            var idcard = {"idcard" : val}
+            $.get(
+                "user/findbyIdcard",idcard,
+                function (backData) {
+                    console.log(backData);
+                    if (backData == "success"){
+                        $("#result").text("该身份证号可用").css("color", "green");
+                    }else {
+                        $("#result").text("身份证号错误").css("color", "red");
+                    }
+                }
+            );
+        }else {
+            $("#result").text("请输入18位身份证号！").css("color", "red");
+        }
+
+    })
+
+    $("#pwd").blur(function confirmIdcard() {
+        var pwd = $("#pwd").val();
+        var pwdLength = pwd.length;
+        if(null != pwd && pwdLength>6 && pwd != undefined){
+            regIsCommitPwd = true;
+            $("#confirmPwd01").text("密码格式正确!").css("color", "green");
+        } else {
+            regIsCommitPwd = false;
+            $("#confirmPwd01").text("密码至少6位！").css("color", "red");
+        }
+    })
+
+    $("#conPwd").blur(function confirmIdcard() {
+        var pwd = $("#pwd").val();
+        var conId = $("#conPwd").val();
+        var conIdLength = conId.length;
+        if(null != conId && conIdLength>6 && conId != undefined) {
+            if (pwd == conId) {
+                regIsCommitPwd = true;
+                $("#confirmPwd").text("两次密码输入一致").css("color", "green");
+            } else {
+                regIsCommitPwd = false;
+                $("#confirmPwd").text("两次密码输入不一致！").css("color", "red");
+            }
+        }else {
+            regIsCommitPwd = false;
+            $("#confirmPwd").text("密码至少6位！").css("color", "red");
+        }
+    })
+
+</script>
+</body>
+</html>
